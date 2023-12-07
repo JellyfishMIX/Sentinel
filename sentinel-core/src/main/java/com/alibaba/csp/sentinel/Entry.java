@@ -58,6 +58,9 @@ public abstract class Entry implements AutoCloseable {
     private final long createTimestamp;
     private long completeTimestamp;
 
+    /**
+     * node 是指标的载体
+     */
     private Node curNode;
     /**
      * {@link Node} of the specific origin, Usually the origin is the Service Consumer.
@@ -67,6 +70,9 @@ public abstract class Entry implements AutoCloseable {
     private Throwable error;
     private BlockException blockError;
 
+    /**
+     * 资源具体信息
+     */
     protected final ResourceWrapper resourceWrapper;
 
     public Entry(ResourceWrapper resourceWrapper) {

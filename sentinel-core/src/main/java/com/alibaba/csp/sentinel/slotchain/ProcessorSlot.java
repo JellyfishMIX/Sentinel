@@ -19,6 +19,7 @@ import com.alibaba.csp.sentinel.context.Context;
 
 /**
  * A container of some process and ways of notification when the process is finished.
+ * processor 的容器，processor 将使用责任链模式用于对资源做处理。
  *
  * @author qinan.qn
  * @author jialiang.linjl

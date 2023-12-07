@@ -120,6 +120,8 @@ import java.util.Map;
  * {@code curl http://localhost:8719/tree?type=root}
  * </p>
  *
+ * 负责收集资源的路径，并将这些资源的调用路径以树状结构存储起来，主要用于根据调用路径来限流降级
+ *
  * @author jialiang.linjl
  * @see EntranceNode
  * @see ContextUtil
