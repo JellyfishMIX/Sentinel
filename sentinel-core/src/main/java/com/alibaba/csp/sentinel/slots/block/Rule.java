@@ -24,6 +24,7 @@ public interface Rule {
 
     /**
      * Get target resource of this rule.
+     * 获取此条规则对应的资源名
      *
      * @return target resource of this rule
      */

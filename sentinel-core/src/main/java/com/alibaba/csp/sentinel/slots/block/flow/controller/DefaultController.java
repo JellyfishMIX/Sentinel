@@ -47,7 +47,9 @@ public class DefaultController implements TrafficShapingController {
 
     @Override
     public boolean canPass(Node node, int acquireCount, boolean prioritized) {
+        // 获取当前 node 的 token 数
         int curCount = avgUsedTokens(node);
+        // 如果当前 token 数 + 所需 token 数超出阈值，那么流控不通过
         if (curCount + acquireCount > count) {
             if (prioritized && grade == RuleConstant.FLOW_GRADE_QPS) {
                 long currentTime;
@@ -65,6 +67,7 @@ public class DefaultController implements TrafficShapingController {
             }
             return false;
         }
+        // 未超出阈值，返回成功
         return true;
     }
 

@@ -141,6 +141,9 @@ import java.util.Map;
 @Spi(order = Constants.ORDER_FLOW_SLOT)
 public class FlowSlot extends AbstractLinkedProcessorSlot<DefaultNode> {
 
+    /**
+     * 工具
+     */
     private final FlowRuleChecker checker;
 
     public FlowSlot() {
@@ -158,24 +161,39 @@ public class FlowSlot extends AbstractLinkedProcessorSlot<DefaultNode> {
         this.checker = checker;
     }
 
+    /**
+     * 责任链 slot 入口方法，对于 FlowSlot，入口处做了规则验证，然后调用下一个 slot 的 entry 方法
+     */
     @Override
     public void entry(Context context, ResourceWrapper resourceWrapper, DefaultNode node, int count,
                       boolean prioritized, Object... args) throws Throwable {
+        // 规则验证
         checkFlow(resourceWrapper, context, node, count, prioritized);
 
+        // 触发下一个 slot 的 entry 方法
         fireEntry(context, resourceWrapper, node, count, prioritized, args);
     }
 
+    /**
+     * 规则验证
+     */
     void checkFlow(ResourceWrapper resource, Context context, DefaultNode node, int count, boolean prioritized)
         throws BlockException {
         checker.checkFlow(ruleProvider, resource, context, node, count, prioritized);
     }
 
+    /**
+     * 责任链 slot 出口方法，对于 FlowSlot，出口处没什么要做的，直接调用下一个 slot 的 exit 方法即可
+     */
     @Override
     public void exit(Context context, ResourceWrapper resourceWrapper, int count, Object... args) {
+        // 触发下一个 slot 的 exit 方法
         fireExit(context, resourceWrapper, count, args);
     }
 
+    /**
+     * 函数映射，资源名 -> 资源对应的流控规则
+     */
     private final Function<String, Collection<FlowRule>> ruleProvider = new Function<String, Collection<FlowRule>>() {
         @Override
         public Collection<FlowRule> apply(String resource) {

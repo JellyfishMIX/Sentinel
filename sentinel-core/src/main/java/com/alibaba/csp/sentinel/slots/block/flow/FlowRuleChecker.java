@@ -46,8 +46,10 @@ public class FlowRuleChecker {
         if (ruleProvider == null || resource == null) {
             return;
         }
+        // 根据资源名获取流控规则
         Collection<FlowRule> rules = ruleProvider.apply(resource.getName());
         if (rules != null) {
+            // 遍历流控规则检查是否放行，任何一个流控规则不放行则抛异常
             for (FlowRule rule : rules) {
                 if (!canPassCheck(rule, context, node, count, prioritized)) {
                     throw new FlowException(rule.getLimitApp(), rule);
@@ -68,20 +70,24 @@ public class FlowRuleChecker {
             return true;
         }
 
+        // 流控规则是集群模式
         if (rule.isClusterMode()) {
             return passClusterCheck(rule, context, node, acquireCount, prioritized);
         }
 
+        // 流控规则是单机模式
         return passLocalCheck(rule, context, node, acquireCount, prioritized);
     }
 
     private static boolean passLocalCheck(FlowRule rule, Context context, DefaultNode node, int acquireCount,
                                           boolean prioritized) {
+        // 根据流控模式选择 node。根据流控规则的生效来源、策略及实际请求的来源，从上下文、默认节点或集群节点中选择一个适当的节点，供后续进行流控计算
         Node selectedNode = selectNodeByRequesterAndStrategy(rule, context, node);
         if (selectedNode == null) {
             return true;
         }
 
+        // 根据流控效果验证规则。快速失败 / Warm Up / 排队等待
         return rule.getRater().canPass(selectedNode, acquireCount, prioritized);
     }
 
